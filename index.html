@@ -10,6 +10,18 @@
         html {
             font-family: "Poppins", sans-serif;
         }
+        .gradient-text {
+            background: linear-gradient(45deg, #f3ec78, #af4261, #00c6ff);
+            -webkit-background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradient-animation 5s ease infinite;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -17,37 +29,37 @@
     <!-- Header -->
     <header class="bg-gray-800 py-6">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="#" class="text-3xl font-bold text-indigo-400">vyxa<span class="text-pink-500">.xyz</span></a>
+            <a href="#" class="text-3xl font-bold text-indigo-400">vyxa<span class="gradient-text">.xyz</span></a>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="container mx-auto py-16">
         <section id="home" class="text-center">
-            <h1 class="text-5xl font-bold mb-4">Welcome to vyxa.xyz</h1>
-            <p class="text-xl mb-8">Your one-stop solution for skibidi toilet</p>
-            <a href="#services" class="bg-indigo-500 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded">Our Services</a>
+            <h1 class="text-5xl font-bold mb-4"> </h1>
+            <p class="text-xl mb-8"> </p>
+            <a href="#services" class="bg-indigo-500 hover:bg-pink-500 text-white font-bold py-2 px-4 rounded"> </a>
         </section>
 
         <section id="about" class="py-16">
-            <h2 class="text-4xl font-bold mb-4">About Us</h2>
-            <p class="text-lg">vyxa.xyz is dedicated to skibidi toilet</p>
+            <h2 class="text-4xl font-bold mb-4"> </h2>
+            <p class="text-lg"> </p>
         </section>
 
         <section id="services" class="py-16 bg-gray-800">
-            <h2 class="text-4xl font-bold mb-4">Skibidi</h2>
+            <h2 class="text-4xl font-bold mb-4"> </h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="p-6 bg-gray-900 rounded">
-                    <h3 class="text-2xl font-bold mb-2">Skibidi</h3>
-                    <p>toilet</p>
+                    <h3 class="text-2xl font-bold mb-2"> </h3>
+                    <p> </p>
                 </div>
                 <div class="p-6 bg-gray-900 rounded">
-                    <h3 class="text-2xl font-bold mb-2">Skibidi</h3>
-                    <p>toilet</p>
+                    <h3 class="text-2xl font-bold mb-2"> </h3>
+                    <p> </p>
                 </div>
                 <div class="p-6 bg-gray-900 rounded">
-                    <h3 class="text-2xl font-bold mb-2">Skibidi</h3>
-                    <p>toilet</p>
+                    <h3 class="text-2xl font-bold mb-2"> </h3>
+                    <p> </p>
                 </div>
             </div>
         </section>
@@ -55,7 +67,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 py-6">
         <div class="container mx-auto text-center">
-            <p>&copy; 2024 vyxa.xyz. All rights reserved.</p>
+            <p>&copy; 2024 vyxa<span class="gradient-text">.xyz</span>. All rights reserved.</p>
         </div>
     </footer>
 
