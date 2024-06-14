@@ -16,15 +16,12 @@
             -webkit-background-clip: text;
             color: transparent;
             background-size: 200% 200%;
-            animation: gradient-animation 5s ease infinite;
+            animation: gradientanim 5s ease infinite;
         }
-        @keyframes gradient-animation {
+        @keyframes gradientanima {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
-        }
-        .glow-box {
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
         }
     </style>
 </head>
@@ -40,7 +37,7 @@
             <h1 class="text-5xl font-bold mb-4">Welcome to vyxa<span class="gradient-text">.xyz</span></h1>
             <p class="gradient-text">Your one-stop solution for hacking software.</p>
         </section>
-        <section id="services" class="py-16 bg-gray-800 rounded-lg shadow-lg glow-box mx-auto px-8" style="max-width: 95%;">
+        <section id="services" class="py-16 bg-gray-800 rounded-lg shadow-lg mx-auto px-8" style="max-width: 95%;">
             <h2 class="text-4xl font-bold mb-8 text-center">Our Services</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div class="p-6 bg-gray-900 rounded-lg shadow-md">
