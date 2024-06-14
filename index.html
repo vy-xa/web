@@ -13,10 +13,9 @@
             height: 100%;
         }
         body {
-            background-color: #1a202c;
+            min-height: 100%;
             display: flex;
             flex-direction: column;
-            min-height: 100%;
         }
         .gradient-text {
             background: linear-gradient(45deg, #f3ec78, #af4261, #00c6ff);
@@ -30,44 +29,48 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        main {
+        .content {
             flex: 1;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 0 20px;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-900 text-white">
     <header class="bg-gray-800 py-6 rounded-b-lg shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <a href="" class="text-3xl font-bold text-indigo-400">vyxa<span class="gradient-text">.xyz</span></a>
         </div>
     </header>
 
-    <main>
-        <section id="home" class="text-center mb-16">
-            <h1 class="text-5xl font-bold mb-4">Welcome to vyxa<span class="gradient-text">.xyz</span></h1>
-            <p class="gradient-text">Your one-stop solution for hacking software.</p>
-        </section>
-        <section id="services" class="py-16 bg-gray-800 rounded-lg shadow-lg mx-auto px-8" style="max-width: 95%;">
-            <h2 class="text-4xl font-bold mb-8 text-center">Our Services</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="p-6 bg-gray-900 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-2">Price</h3>
-                    <p>We ensure that our software is fairly marketed, if it isn't free, it is most likely cheap.</p>
+    <div class="content">
+        <main class="container mx-auto py-16">
+            <section id="home" class="text-center mb-16">
+                <h1 class="text-5xl font-bold mb-4">Welcome to vyxa<span class="gradient-text">.xyz</span></h1>
+                <p class="gradient-text">Your one-stop solution for hacking software.</p>
+            </section>
+            <section id="services" class="py-16 bg-gray-800 rounded-lg shadow-lg mx-auto px-8" style="max-width: 95%;">
+                <h2 class="text-4xl font-bold mb-8 text-center">Our Services</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="p-6 bg-gray-900 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold mb-2">Price</h3>
+                        <p>We ensure that our software is fairly marketed, if it isn't free, it is most likely cheap.</p>
+                    </div>
+                    <div class="p-6 bg-gray-900 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold mb-2">Quality</h3>
+                        <p>Our team dedicates quality to each software to improve user experience.</p>
+                    </div>
+                    <div class="p-6 bg-gray-900 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold mb-2">Compatibility</h3>
+                        <p>We make compatibility a very important part of our software, making sure it works on all platforms.</p>
+                    </div>
                 </div>
-                <div class="p-6 bg-gray-900 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-2">Quality</h3>
-                    <p>Our team dedicates quality to each software to improve user experience.</p>
-                </div>
-                <div class="p-6 bg-gray-900 rounded-lg shadow-md">
-                    <h3 class="text-2xl font-bold mb-2">Compatibility</h3>
-                    <p>We make compatibility a very important part of our software, making sure it works on all platforms.</p>
-                </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
+    </div>
 
     <footer class="bg-gray-800 py-6 rounded-t-lg shadow-lg">
         <div class="container mx-auto text-center">
