@@ -10,6 +10,13 @@
         @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap");
         html {
             font-family: "Poppins", sans-serif;
+            height: 100%;
+        }
+        body {
+            background-color: #1a202c;
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
         }
         .gradient-text {
             background: linear-gradient(45deg, #f3ec78, #af4261, #00c6ff);
@@ -23,16 +30,22 @@
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body>
     <header class="bg-gray-800 py-6 rounded-b-lg shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <a href="" class="text-3xl font-bold text-indigo-400">vyxa<span class="gradient-text">.xyz</span></a>
         </div>
     </header>
-<center>
-    <main class="container mx-auto py-16">
+
+    <main>
         <section id="home" class="text-center mb-16">
             <h1 class="text-5xl font-bold mb-4">Welcome to vyxa<span class="gradient-text">.xyz</span></h1>
             <p class="gradient-text">Your one-stop solution for hacking software.</p>
@@ -55,7 +68,7 @@
             </div>
         </section>
     </main>
-</center>
+
     <footer class="bg-gray-800 py-6 rounded-t-lg shadow-lg">
         <div class="container mx-auto text-center">
             <p>&copy; 2024 vyxa<span class="gradient-text">.xyz</span>. All rights reserved.</p>
