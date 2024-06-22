@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>6locc</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+    cursor: url(https://6locc.xyz/cursor.png) 16 16, auto !important;
+    }
+    body {
+      background-color: #333;
+      color: white;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      overflow: hidden;
+    }
+
+    .container {
+      background-color: #222;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .container:hover {
+      transform: scale(1.05);
+    }
+
+    .button {
+      background-color: black;
+      color: white;
+      font-family: 'Roboto', sans-serif;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .button:hover {
+      background-color: #555;
+    }
+
+    .textbox {
+      background-color: #555;
+      font-family: 'Roboto', sans-serif;
+      color: rgb(255, 255, 255);
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      width: calc(100% - 22px);
+      transition: background-color 0.3s ease;
+    }
+
+    .textbox:hover {
+      background-color: #000000;
+    }
+
+    .snowflakes-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      left: 0;
+      z-index: 1;
+      color: #fff;
+      user-select: none;
+      pointer-events: none;
+      font-size: 1em;
+      animation-name: snowfall;
+      animation-duration: 15s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes snowfall {
+      0% { transform: translateY(-10px); }
+      100% { transform: translateY(110vh); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="button" id="attach">Attach</button>
+    <input type="text" class="textbox" placeholder="Status" id="status">
+  </div>
+
+  <div class="snowflakes-container"></div>
+
+  <script>
+    const attach = document.getElementById("attach");
+    const statusLabel = document.getElementById("status");
+
+    attach.onclick = async () => {
+      try {
+        const result = await pywebview.api.inject();
+        if (result) {
+          statusLabel.value = "Injection complete!";
+        } else {
+          statusLabel.value = "Injection failed.";
+        }
+      } catch (error) {
+        console.error("Error injecting:", error);
+        statusLabel.value = "Injection failed (error).";
+      }
+    };
+
+    const maxFlakes = 350;
+    const flakeChar = '&#10052;';
+
+    for (let i = 0; i < maxFlakes; i++) {
+      const flake = document.createElement('div');
+      flake.classList.add('snowflake');
+      flake.innerHTML = flakeChar;
+      flake.style.left = Math.random() * 100 + 'vw';
+      flake.style.animationDuration = (Math.random() * 3 + 7) + 's';
+      flake.style.animationDelay = (Math.random() * 15) + 's';
+      flake.style.opacity = Math.random();
+      flake.style.fontSize = (Math.random() * 0.75 + 0.25) + 'em';
+      document.querySelector('.snowflakes-container').appendChild(flake);
+    }
+  </script>
+</body>
+</html>
