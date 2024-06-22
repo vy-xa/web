@@ -44,6 +44,13 @@
             -webkit-text-fill-color: transparent;
             -webkit-text-stroke: 1px #fff;
         }
+        .description {
+            margin-top: 1rem;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
         .tilt-container {
             perspective: 1000px;
             display: flex;
@@ -93,11 +100,27 @@
                 opacity: 1;
             }
         }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>GET <span>VHOOK</span></h1>
+        <p class="description">What vhook is?
+
+Vhook is the best upcoming executor with powerfull execution and fast injection, it has costumizable ui and its fully undetectable
+
+Why vhook?
+
+It provides no viruses, experienced developers and fast updates, it will be completely free and keyless
+Join now at .gg/getvhook or by clicking the button below</p>
         <div class="tilt-container">
             <div class="tilt">
                 <img src="vhook/showcase.png" alt="Vhook Showcase">
