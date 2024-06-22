@@ -69,13 +69,13 @@ body {
     background: inherit;
     color: inherit;
     overflow: hidden;
-    animation: float 1s infinite;
+    animation: glitch 1s infinite;
 }
 
 .username::after {
     left: 2px;
     text-shadow: -2px 0 #ff0000;
-    animation: float 1s infinite;
+    animation: glitch 1s infinite;
     animation-delay: 0.2s;
 }
 
@@ -93,9 +93,10 @@ body {
     text-decoration: none;
     color: #ffffff;
     background-color: #cc3333; /* Darker red for button */
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s ease-out; /* Added transform transition */
 }
 
 .download-button:hover {
     background-color: #ff5555; /* Lighter red on hover */
+    transform: rotate(5deg); /* Tilt effect on hover */
 }
