@@ -94,10 +94,10 @@ body {
     color: #ffffff;
     background-color: #cc3333; /* Darker red for button */
     transition: background-color 0.3s, transform 0.3s ease-out; /* Added transform transition */
+    transform-style: preserve-3d; /* Ensure 3D transformations are preserved */
 }
 
 .download-button:hover {
     background-color: #ff5555; /* Lighter red on hover */
-    transform-origin: center; /* Set transform origin to center */
-    transform: rotate(calc(2deg * var(--tilt-factor))); /* Tilt effect based on --tilt-factor */
+    transform: perspective(1000px) rotateX(calc(5deg * var(--tilt-y))) rotateY(calc(5deg * var(--tilt-x))); /* 3D tilt effect */
 }
