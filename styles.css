@@ -2,11 +2,13 @@
     from { opacity: 0; }
     to { opacity: 1; }
 }
+
 @keyframes float {
     0% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
     100% { transform: translateY(0); }
 }
+
 @keyframes glitch {
     0% { clip: rect(44px, 450px, 56px, 0); }
     5% { clip: rect(24px, 450px, 78px, 0); }
@@ -56,16 +58,16 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background-color: #4d0000;
+    background-color: #2b0000; /* Darker background color */
     animation: fadeIn 2s ease-in-out;
 }
 
 .container {
     text-align: center;
-    background-color: rgba(255, 0, 0, 0.5);
+    background-color: rgba(100, 0, 0, 0.8); /* Darker red background */
     padding: 2rem;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(255, 0, 0, 0.3);
+    box-shadow: 0 4px 8px rgba(100, 0, 0, 0.6); /* Adjusted shadow */
     animation: float 3s infinite ease-in-out;
 }
 
@@ -104,7 +106,7 @@ body {
 
 .bio {
     font-size: 1rem;
-    color: #cccccc;
+    color: #aaaaaa; /* Lighter gray for bio text */
     margin-bottom: 1rem;
 }
 
@@ -115,10 +117,10 @@ body {
     border-radius: 5px;
     text-decoration: none;
     color: #ffffff;
-    background-color: #ff3333;
+    background-color: #cc3333; /* Darker red for button */
     transition: background-color 0.3s;
 }
 
 .download-button:hover {
-    background-color: #ff6666;
+    background-color: #ff5555; /* Lighter red on hover */
 }
