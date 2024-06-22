@@ -99,5 +99,5 @@ body {
 
 .download-button:hover {
     background-color: #ff5555; /* Lighter red on hover */
-    transform: perspective(1000px) rotateX(calc(5deg * var(--tilt-y))) rotateY(calc(5deg * var(--tilt-x))); /* 3D tilt effect */
+    transform: perspective(1000px) rotateX(calc(10deg * var(--tilt-y))) rotateY(calc(10deg * var(--tilt-x))); /* Enhanced 3D tilt effect */
 }
