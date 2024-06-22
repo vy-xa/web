@@ -98,5 +98,6 @@ body {
 
 .download-button:hover {
     background-color: #ff5555; /* Lighter red on hover */
-    transform: rotate(5deg); /* Tilt effect on hover */
+    transform-origin: center; /* Set transform origin to center */
+    transform: rotate(calc(2deg * var(--tilt-factor))); /* Tilt effect based on --tilt-factor */
 }
