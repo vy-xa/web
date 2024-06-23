@@ -1,1 +1,67 @@
-updating...
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Messaging</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Secure Messaging</h1>
+
+        <!-- Registration Form -->
+        <div id="registration">
+            <h2>Register</h2>
+            <form id="registerForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <br>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <label for="loginUsername">Username:</label>
+                <input type="text" id="loginUsername" name="username" required>
+                <br>
+                <label for="loginPassword">Password:</label>
+                <input type="password" id="loginPassword" name="password" required>
+                <br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <!-- Send Message Form -->
+        <div id="sendMessage">
+            <h2>Send Message</h2>
+            <form id="sendMessageForm">
+                <label for="receiver">Receiver Username:</label>
+                <input type="text" id="receiver" name="receiver" required>
+                <br>
+                <label for="messageContent">Message:</label>
+                <textarea id="messageContent" name="content" required></textarea>
+                <br>
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+
+        <!-- Display Messages -->
+        <div id="messages">
+            <h2>Messages</h2>
+            <ul id="messageList">
+                <!-- Messages will be dynamically added here -->
+            </ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+...
