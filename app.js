@@ -133,6 +133,12 @@ signupButton.addEventListener('click', () => {
     const email = emailInput.value;
     const password = passwordInput.value;
     const username = usernameInput.value;
+
+    if (!(/[a-zA-Z0-9]/.test(username))) {
+        alert('Username must contain at least one letter or number.');
+        return;
+    }
+
     auth.createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
             // Save the username in the Firebase user profile
@@ -149,6 +155,7 @@ signupButton.addEventListener('click', () => {
         })
         .catch(error => alert(error.message));
 });
+
 
 logoutButton.addEventListener('click', () => {
     auth.signOut();
