@@ -1,7 +1,7 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-auth.js";
+import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-database.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-analytics.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBLDbCmryVHE88d4CAwVpsFUlQQljdobtA",
@@ -10,12 +10,15 @@ const firebaseConfig = {
     storageBucket: "locc-6c202.appspot.com",
     messagingSenderId: "383538729956",
     appId: "1:383538729956:web:9812862b608aeab72cadf1",
-    measurementId: "G-BKBFG279BW"
+    measurementId: "G-BKBFG279BW",
+    databaseURL: "https://locc-6c202-default-rtdb.firebaseio.com/"
 };
 
+
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+const auth = getAuth(app);
 const database = getDatabase(app);
+const analytics = getAnalytics(app);
 
 const loginDiv = document.getElementById('login');
 const chatDiv = document.getElementById('chat');
