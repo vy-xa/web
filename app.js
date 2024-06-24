@@ -71,36 +71,50 @@ const displayMessages = (snapshot) => {
 
         // Display username and message text
         const messageText = document.createElement('span');
-        messageText.textContent = `${message.username}: ${message.text}`;
+        messageText.classList.add('message-text');
+        messageText.textContent = `${message.user}: ${message.text}`;
+
+        // Ensure message text does not exceed maximum length
         messageText.style.maxWidth = '100%';
         messageText.style.wordWrap = 'break-word';
 
-        // Edit and delete buttons (only visible to the original sender)
-        if (currentUser && message.uid === currentUser.uid) {
+        // Buttons container
+        const buttonsDiv = document.createElement('div');
+        buttonsDiv.classList.add('buttons');
+
+        // Edit button (only visible to the original sender)
+        if (currentUser && message.user === currentUser.displayName) {
             const editButton = document.createElement('button');
-            editButton.textContent = 'Edit';
             editButton.classList.add('button');
+            const editImg = document.createElement('img');
+            editImg.src = 'edit.png';
+            editButton.appendChild(editImg);
             editButton.addEventListener('click', () => {
                 const newText = prompt('Edit your message:', message.text);
                 if (newText !== null && newText.trim() !== '') {
                     editMessage(messageId, newText);
                 }
             });
+            buttonsDiv.appendChild(editButton);
+        }
 
+        // Delete button (only visible to the original sender)
+        if (currentUser && message.user === currentUser.displayName) {
             const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
             deleteButton.classList.add('button');
+            const deleteImg = document.createElement('img');
+            deleteImg.src = 'remove.png';
+            deleteButton.appendChild(deleteImg);
             deleteButton.addEventListener('click', () => {
                 if (confirm('Are you sure you want to delete this message?')) {
                     deleteMessage(messageId);
                 }
             });
-
-            messageElement.appendChild(editButton);
-            messageElement.appendChild(deleteButton);
+            buttonsDiv.appendChild(deleteButton);
         }
 
-        // Append message elements to the message div
+        // Append buttons and message text to message element
+        messageElement.appendChild(buttonsDiv);
         messageElement.appendChild(messageText);
         messagesDiv.appendChild(messageElement);
     });
