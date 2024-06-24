@@ -60,6 +60,8 @@ button:hover {
 }
 
 .message {
+    display: flex;
+    align-items: center;
     padding: 10px;
     background: #007bff;
     color: white;
@@ -75,12 +77,13 @@ button:hover {
     background: linear-gradient(145deg, #0056b3, #00408a);
 }
 
-.message .button {
+.message .buttons {
     display: none;
     position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
+    left: 10px;
+}
+
+.message .button {
     background: #dc3545;
     border: none;
     padding: 5px 10px;
@@ -95,8 +98,14 @@ button:hover {
     background: #c82333;
 }
 
-.message:hover .button {
-    display: inline-block;
+.message:hover .buttons {
+    display: flex;
+}
+
+.message .message-text {
+    flex: 1;
+    padding-left: 50px;
+    word-wrap: break-word;
 }
 
 @keyframes fadeIn {
