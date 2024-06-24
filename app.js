@@ -62,10 +62,13 @@ const deleteMessage = (messageId) => {
 
 // Function to display messages
 const displayMessages = (snapshot) => {
-    messagesDiv.innerHTML = '';
+    messagesDiv.innerHTML = ''; // Clear previous messages
+
     snapshot.forEach(childSnapshot => {
         const message = childSnapshot.val();
         const messageId = childSnapshot.key;
+        
+        // Create message element
         const messageElement = document.createElement('div');
         messageElement.classList.add('message');
 
@@ -78,6 +81,9 @@ const displayMessages = (snapshot) => {
         messageText.style.maxWidth = '100%';
         messageText.style.wordWrap = 'break-word';
 
+        // Append message text to message element
+        messageElement.appendChild(messageText);
+
         // Buttons container
         const buttonsDiv = document.createElement('div');
         buttonsDiv.classList.add('buttons');
@@ -85,10 +91,8 @@ const displayMessages = (snapshot) => {
         // Edit button (only visible to the original sender)
         if (currentUser && message.user === currentUser.displayName) {
             const editButton = document.createElement('button');
-            editButton.classList.add('button');
-            const editImg = document.createElement('img');
-            editImg.src = 'edit.png';
-            editButton.appendChild(editImg);
+            editButton.classList.add('button', 'edit-button');
+            editButton.innerHTML = '<img src="edit.png" alt="Edit">';
             editButton.addEventListener('click', () => {
                 const newText = prompt('Edit your message:', message.text);
                 if (newText !== null && newText.trim() !== '') {
@@ -101,10 +105,8 @@ const displayMessages = (snapshot) => {
         // Delete button (only visible to the original sender)
         if (currentUser && message.user === currentUser.displayName) {
             const deleteButton = document.createElement('button');
-            deleteButton.classList.add('button');
-            const deleteImg = document.createElement('img');
-            deleteImg.src = 'remove.png';
-            deleteButton.appendChild(deleteImg);
+            deleteButton.classList.add('button', 'delete-button');
+            deleteButton.innerHTML = '<img src="remove.png" alt="Delete">';
             deleteButton.addEventListener('click', () => {
                 if (confirm('Are you sure you want to delete this message?')) {
                     deleteMessage(messageId);
@@ -113,13 +115,17 @@ const displayMessages = (snapshot) => {
             buttonsDiv.appendChild(deleteButton);
         }
 
-        // Append buttons and message text to message element
+        // Append buttons to message element
         messageElement.appendChild(buttonsDiv);
-        messageElement.appendChild(messageText);
+
+        // Append message element to messagesDiv
         messagesDiv.appendChild(messageElement);
     });
+
+    // Scroll to the bottom of messagesDiv
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 };
+
 
 // Event listeners for buttons
 loginButton.addEventListener('click', () => {
