@@ -1,4 +1,3 @@
-// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBLDbCmryVHE88d4CAwVpsFUlQQljdobtA",
     authDomain: "locc-6c202.firebaseapp.com",
@@ -10,7 +9,6 @@ const firebaseConfig = {
     databaseURL: "https://locc-6c202-default-rtdb.firebaseio.com/"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const database = firebase.database();
@@ -18,6 +16,7 @@ const analytics = firebase.analytics();
 
 const loginDiv = document.getElementById('login');
 const chatDiv = document.getElementById('chat');
+const usernameInput = document.getElementById('username');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const loginButton = document.getElementById('login-button');
@@ -27,6 +26,7 @@ const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 const messagesDiv = document.getElementById('messages');
 
+const usersRef = database.ref('users');
 const messagesRef = database.ref('messages');
 
 loginButton.addEventListener('click', () => {
@@ -39,7 +39,16 @@ loginButton.addEventListener('click', () => {
 signupButton.addEventListener('click', () => {
     const email = emailInput.value;
     const password = passwordInput.value;
+    const username = usernameInput.value;
     auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            // Save the username in the database
+            const user = userCredential.user;
+            usersRef.child(user.uid).set({
+                username: username,
+                email: email
+            });
+        })
         .catch(error => alert(error.message));
 });
 
@@ -50,10 +59,14 @@ logoutButton.addEventListener('click', () => {
 sendButton.addEventListener('click', () => {
     const message = messageInput.value;
     if (message.trim() !== "") {
-        messagesRef.push({
-            text: message,
-            timestamp: Date.now(),
-            user: auth.currentUser.email
+        const user = auth.currentUser;
+        usersRef.child(user.uid).once('value').then(snapshot => {
+            const username = snapshot.val().username;
+            messagesRef.push({
+                text: message,
+                timestamp: Date.now(),
+                user: username
+            });
         });
         messageInput.value = "";
     }
