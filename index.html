@@ -1,32 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>6locc messaging</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-analytics-compat.js"></script>
+    <title>Chat App</title>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-database.js"></script>
+    <style>
+        #chat { display: none; }
+        .message { margin: 5px 0; }
+        .button { margin-left: 10px; }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <h1>6locc messaging</h1>
-        <h2>ily 0prime</h2>
-        <div id="login">
-            <input type="text" id="username" placeholder="Username">
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button id="login-button">Login</button>
-            <button id="signup-button">Sign Up</button>
-        </div>
-        <div id="chat" style="display:none;">
-            <div id="messages"></div>
-            <input type="text" id="message-input" placeholder="Type a message">
-            <button id="send-button">Send</button>
-            <button id="logout-button">Logout</button>
-        </div>
+    <div id="login">
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button id="signup-button">Sign Up</button>
+        <button id="login-button">Login</button>
+    </div>
+    <div id="chat">
+        <div id="messages"></div>
+        <input type="text" id="message-input" placeholder="Type a message">
+        <button id="send-button">Send</button>
+        <button id="logout-button">Logout</button>
     </div>
     <script src="app.js"></script>
 </body>
