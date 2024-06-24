@@ -14,7 +14,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const database = firebase.database();
-const analytics = firebase.analytics();
 
 const loginDiv = document.getElementById('login');
 const chatDiv = document.getElementById('chat');
