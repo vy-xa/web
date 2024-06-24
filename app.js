@@ -29,6 +29,79 @@ const messagesDiv = document.getElementById('messages');
 const usersRef = database.ref('users');
 const messagesRef = database.ref('messages');
 
+let currentUser = null;
+
+const clearMessageInput = () => {
+    messageInput.value = '';
+    messageInput.focus();
+};
+
+const addMessage = (text, user) => {
+    messagesRef.push({
+        text: text,
+        timestamp: Date.now(),
+        user: user
+    });
+};
+
+const editMessage = (messageId, newText) => {
+    messagesRef.child(messageId).update({
+        text: newText
+    });
+};
+
+const deleteMessage = (messageId) => {
+    messagesRef.child(messageId).remove();
+};
+
+const displayMessages = (snapshot) => {
+    messagesDiv.innerHTML = '';
+    snapshot.forEach(childSnapshot => {
+        const message = childSnapshot.val();
+        const messageId = childSnapshot.key;
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        
+        const messageText = document.createElement('span');
+        messageText.textContent = `${message.user}: ${message.text}`;
+
+        const replyButton = document.createElement('button');
+        replyButton.textContent = 'Reply';
+        replyButton.addEventListener('click', () => {
+            messageInput.value = `@${message.user} `;
+            clearMessageInput();
+        });
+
+        if (currentUser && message.user === currentUser.displayName) {
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Edit';
+            editButton.addEventListener('click', () => {
+                const newText = prompt('Edit your message:', message.text);
+                if (newText !== null && newText.trim() !== '') {
+                    editMessage(messageId, newText);
+                }
+            });
+            messageElement.appendChild(editButton);
+        }
+
+        if (currentUser && message.user === currentUser.displayName) {
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Delete';
+            deleteButton.addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete this message?')) {
+                    deleteMessage(messageId);
+                }
+            });
+            messageElement.appendChild(deleteButton);
+        }
+
+        messageElement.appendChild(messageText);
+        messageElement.appendChild(replyButton);
+        messagesDiv.appendChild(messageElement);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+};
+
 loginButton.addEventListener('click', () => {
     const email = emailInput.value;
     const password = passwordInput.value;
@@ -42,11 +115,14 @@ signupButton.addEventListener('click', () => {
     const username = usernameInput.value;
     auth.createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
-            // Save the username in the database
             const user = userCredential.user;
-            usersRef.child(user.uid).set({
-                username: username,
-                email: email
+            user.updateProfile({
+                displayName: username
+            }).then(() => {
+                usersRef.child(user.uid).set({
+                    username: username,
+                    email: email
+                });
             });
         })
         .catch(error => alert(error.message));
@@ -57,38 +133,44 @@ logoutButton.addEventListener('click', () => {
 });
 
 sendButton.addEventListener('click', () => {
-    const message = messageInput.value;
-    if (message.trim() !== "") {
-        const user = auth.currentUser;
-        usersRef.child(user.uid).once('value').then(snapshot => {
-            const username = snapshot.val().username;
-            messagesRef.push({
-                text: message,
-                timestamp: Date.now(),
-                user: username
-            });
-        });
-        messageInput.value = "";
+    const message = messageInput.value.trim();
+    if (message === '') {
+        return;
+    }
+
+    const now = Date.now();
+    if (currentUser && currentUser.lastMessageTime && (now - currentUser.lastMessageTime < 2000)) {
+        alert('Please wait a moment before sending another message.');
+        return;
+    }
+
+    if (currentUser) {
+        addMessage(message, currentUser.displayName);
+        currentUser.lastMessageTime = now;
+        clearMessageInput();
+    } else {
+        alert('You must be logged in to send messages.');
     }
 });
 
 auth.onAuthStateChanged(user => {
     if (user) {
+        currentUser = user;
         loginDiv.style.display = 'none';
         chatDiv.style.display = 'block';
+
+        const welcomeMessage = document.createElement('div');
+        welcomeMessage.textContent = `Welcome, ${user.displayName}!`;
+        messagesDiv.appendChild(welcomeMessage);
+
+        messagesRef.on('value', snapshot => {
+            displayMessages(snapshot);
+        });
+
     } else {
+        currentUser = null;
         loginDiv.style.display = 'block';
         chatDiv.style.display = 'none';
+        messagesDiv.innerHTML = '';
     }
-});
-
-messagesRef.on('value', snapshot => {
-    messagesDiv.innerHTML = '';
-    snapshot.forEach(childSnapshot => {
-        const message = childSnapshot.val();
-        const messageElement = document.createElement('div');
-        messageElement.textContent = `${message.user}: ${message.text}`;
-        messagesDiv.appendChild(messageElement);
-    });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 });
