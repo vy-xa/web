@@ -14,12 +14,10 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const database = firebase.database();
-const analytics = firebase.analytics();
 
 const loginDiv = document.getElementById('login');
 const chatDiv = document.getElementById('chat');
 const usernameInput = document.getElementById('username');
-const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const loginButton = document.getElementById('login-button');
 const signupButton = document.getElementById('signup-button');
@@ -32,7 +30,6 @@ const usersRef = database.ref('users');
 const messagesRef = database.ref('messages');
 
 let currentUser = null; // To store the current logged-in user
-
 const MAX_MESSAGE_LENGTH = 1000; // Character limit for messages
 
 // Function to clear message input and reset focus
@@ -46,7 +43,8 @@ const addMessage = (text, user) => {
     messagesRef.push({
         text: text,
         timestamp: Date.now(),
-        user: user
+        uid: user.uid,
+        username: user.username
     });
 };
 
@@ -73,49 +71,37 @@ const displayMessages = (snapshot) => {
 
         // Display username and message text
         const messageText = document.createElement('span');
-        messageText.textContent = `${message.user}: ${message.text}`;
-
-        // Ensure message text does not exceed maximum length
+        messageText.textContent = `${message.username}: ${message.text}`;
         messageText.style.maxWidth = '100%';
         messageText.style.wordWrap = 'break-word';
 
-        // Reply button
-        const replyButton = document.createElement('button');
-        replyButton.textContent = 'Reply';
-        replyButton.addEventListener('click', () => {
-            // Populate message input for replying
-            messageInput.value = `@${message.user} `;
-            clearMessageInput();
-        });
-
-        // Edit button (only visible to the original sender)
-        if (currentUser && message.user === currentUser.displayName) {
+        // Edit and delete buttons (only visible to the original sender)
+        if (currentUser && message.uid === currentUser.uid) {
             const editButton = document.createElement('button');
             editButton.textContent = 'Edit';
+            editButton.classList.add('button');
             editButton.addEventListener('click', () => {
                 const newText = prompt('Edit your message:', message.text);
                 if (newText !== null && newText.trim() !== '') {
                     editMessage(messageId, newText);
                 }
             });
-            messageElement.appendChild(editButton);
-        }
 
-        // Delete button (only visible to the original sender)
-        if (currentUser && message.user === currentUser.displayName) {
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Delete';
+            deleteButton.classList.add('button');
             deleteButton.addEventListener('click', () => {
                 if (confirm('Are you sure you want to delete this message?')) {
                     deleteMessage(messageId);
                 }
             });
+
+            messageElement.appendChild(editButton);
             messageElement.appendChild(deleteButton);
         }
 
         // Append message elements to the message div
         messageElement.appendChild(messageText);
-        messageElement.appendChild(replyButton);
         messagesDiv.appendChild(messageElement);
     });
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
@@ -123,42 +109,55 @@ const displayMessages = (snapshot) => {
 
 // Event listeners for buttons
 loginButton.addEventListener('click', () => {
-    const email = emailInput.value;
+    const username = usernameInput.value.trim();
     const password = passwordInput.value;
-    auth.signInWithEmailAndPassword(email, password)
+
+    if (!username || !password) {
+        alert('Username and password are required.');
+        return;
+    }
+
+    auth.signInWithEmailAndPassword(`${username}@example.com`, password)
+        .then(userCredential => {
+            currentUser = userCredential.user;
+            currentUser.username = username;
+            loginDiv.style.display = 'none';
+            chatDiv.style.display = 'block';
+            loadMessages();
+        })
         .catch(error => alert(error.message));
 });
 
 signupButton.addEventListener('click', () => {
-    const email = emailInput.value;
+    const username = usernameInput.value.trim();
     const password = passwordInput.value;
-    const username = usernameInput.value;
+
+    if (!username || !password) {
+        alert('Username and password are required.');
+        return;
+    }
 
     if (!(/[a-zA-Z0-9]/.test(username))) {
         alert('Username must contain at least one letter or number.');
         return;
     }
 
-    auth.createUserWithEmailAndPassword(email, password)
+    auth.createUserWithEmailAndPassword(`${username}@6loccyap.com`, password)
         .then(userCredential => {
-            // Save the username in the Firebase user profile
             const user = userCredential.user;
-            return user.updateProfile({
-                displayName: username
-            }).then(() => {
-                // Save the username in the database
-                usersRef.child(user.uid).set({
-                    username: username,
-                    email: email
-                });
-            });
+            user.updateProfile({ displayName: username });
+            usersRef.child(user.uid).set({ username: username });
         })
         .catch(error => alert(error.message));
 });
 
-
 logoutButton.addEventListener('click', () => {
-    auth.signOut();
+    auth.signOut().then(() => {
+        loginDiv.style.display = 'block';
+        chatDiv.style.display = 'none';
+        currentUser = null;
+        messagesDiv.innerHTML = ''; // Clear messages when logged out
+    });
 });
 
 sendButton.addEventListener('click', () => {
@@ -167,49 +166,39 @@ sendButton.addEventListener('click', () => {
         return;
     }
 
-    // Check message length
     if (message.length > MAX_MESSAGE_LENGTH) {
         alert(`Message should not exceed ${MAX_MESSAGE_LENGTH} characters.`);
         return;
     }
 
-    // Prevent message flooding (e.g., limit to one message every 2 seconds)
-    const now = Date.now();
-    if (currentUser && currentUser.lastMessageTime && (now - currentUser.lastMessageTime < 2000)) {
-        alert('Please wait a moment before sending another message.');
-        return;
-    }
-
     if (currentUser) {
-        addMessage(message, currentUser.displayName);
-        currentUser.lastMessageTime = now; // Update last message time
+        addMessage(message, currentUser);
         clearMessageInput();
     } else {
         alert('You must be logged in to send messages.');
     }
 });
 
+// Load and display messages
+const loadMessages = () => {
+    messagesRef.on('value', snapshot => {
+        displayMessages(snapshot);
+    });
+};
+
 // Authentication state change listener
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
-        loginDiv.style.display = 'none';
-        chatDiv.style.display = 'block';
-
-        // Display welcome message
-        const welcomeMessage = document.createElement('div');
-        welcomeMessage.textContent = `Welcome, ${user.displayName}!`;
-        messagesDiv.appendChild(welcomeMessage);
-
-        // Load and display messages
-        messagesRef.on('value', snapshot => {
-            displayMessages(snapshot);
+        usersRef.child(user.uid).once('value').then(snapshot => {
+            currentUser.username = snapshot.val().username;
+            loginDiv.style.display = 'none';
+            chatDiv.style.display = 'block';
+            loadMessages();
         });
-
     } else {
         currentUser = null;
         loginDiv.style.display = 'block';
         chatDiv.style.display = 'none';
-        messagesDiv.innerHTML = ''; // Clear messages when logged out
     }
 });
