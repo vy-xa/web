@@ -14,6 +14,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const database = firebase.database();
+const analytics = firebase.analytics();
 
 const loginDiv = document.getElementById('login');
 const chatDiv = document.getElementById('chat');
@@ -30,6 +31,7 @@ const usersRef = database.ref('users');
 const messagesRef = database.ref('messages');
 
 let currentUser = null; // To store the current logged-in user
+
 const MAX_MESSAGE_LENGTH = 1000; // Character limit for messages
 
 // Function to clear message input and reset focus
@@ -43,8 +45,7 @@ const addMessage = (text, user) => {
     messagesRef.push({
         text: text,
         timestamp: Date.now(),
-        uid: user.uid,
-        username: user.username
+        user: user
     });
 };
 
@@ -123,50 +124,40 @@ const displayMessages = (snapshot) => {
 
 // Event listeners for buttons
 loginButton.addEventListener('click', () => {
-    const username = usernameInput.value.trim();
+    const username = usernameInput.value;
     const password = passwordInput.value;
-
-    if (!username || !password) {
-        alert('Username and password are required.');
-        return;
-    }
-
-    auth.signInWithEmailAndPassword(`${username}@example.com`, password)
-        .then(userCredential => {
-            currentUser = userCredential.user;
-            currentUser.username = username;
-            loginDiv.style.display = 'none';
-            chatDiv.style.display = 'block';
-            loadMessages();
-        })
+    auth.signInWithEmailAndPassword(`${username}@chatapp.com`, password)
         .catch(error => alert(error.message));
 });
 
 signupButton.addEventListener('click', () => {
-    const username = usernameInput.value.trim();
+    const username = usernameInput.value;
     const password = passwordInput.value;
 
-    if (!username || !password) {
-        alert('Username and password are required.');
+    if (!(/[a-zA-Z0-9]/.test(username))) {
+        alert('Username must contain at least one letter or number.');
         return;
     }
 
-    auth.createUserWithEmailAndPassword(`${username}@example.com`, password)
+    auth.createUserWithEmailAndPassword(`${username}@chatapp.com`, password)
         .then(userCredential => {
+            // Save the username in the Firebase user profile
             const user = userCredential.user;
-            user.updateProfile({ displayName: username });
-            usersRef.child(user.uid).set({ username: username });
+            return user.updateProfile({
+                displayName: username
+            }).then(() => {
+                // Save the username in the database
+                usersRef.child(user.uid).set({
+                    username: username,
+                    email: `${username}@chatapp.com`
+                });
+            });
         })
         .catch(error => alert(error.message));
 });
 
 logoutButton.addEventListener('click', () => {
-    auth.signOut().then(() => {
-        loginDiv.style.display = 'block';
-        chatDiv.style.display = 'none';
-        currentUser = null;
-        messagesDiv.innerHTML = ''; // Clear messages when logged out
-    });
+    auth.signOut();
 });
 
 sendButton.addEventListener('click', () => {
@@ -175,39 +166,49 @@ sendButton.addEventListener('click', () => {
         return;
     }
 
+    // Check message length
     if (message.length > MAX_MESSAGE_LENGTH) {
         alert(`Message should not exceed ${MAX_MESSAGE_LENGTH} characters.`);
         return;
     }
 
+    // Prevent message flooding (e.g., limit to one message every 2 seconds)
+    const now = Date.now();
+    if (currentUser && currentUser.lastMessageTime && (now - currentUser.lastMessageTime < 2000)) {
+        alert('Please wait a moment before sending another message.');
+        return;
+    }
+
     if (currentUser) {
-        addMessage(message, currentUser);
+        addMessage(message, currentUser.displayName);
+        currentUser.lastMessageTime = now; // Update last message time
         clearMessageInput();
     } else {
         alert('You must be logged in to send messages.');
     }
 });
 
-// Load and display messages
-const loadMessages = () => {
-    messagesRef.on('value', snapshot => {
-        displayMessages(snapshot);
-    });
-};
-
 // Authentication state change listener
 auth.onAuthStateChanged(user => {
     if (user) {
         currentUser = user;
-        usersRef.child(user.uid).once('value').then(snapshot => {
-            currentUser.username = snapshot.val().username;
-            loginDiv.style.display = 'none';
-            chatDiv.style.display = 'block';
-            loadMessages();
+        loginDiv.style.display = 'none';
+        chatDiv.style.display = 'block';
+
+        // Display welcome message
+        const welcomeMessage = document.createElement('div');
+        welcomeMessage.textContent = `Welcome, ${user.displayName}!`;
+        messagesDiv.appendChild(welcomeMessage);
+
+        // Load and display messages
+        messagesRef.on('value', snapshot => {
+            displayMessages(snapshot);
         });
+
     } else {
         currentUser = null;
         loginDiv.style.display = 'block';
         chatDiv.style.display = 'none';
+        messagesDiv.innerHTML = ''; // Clear messages when logged out
     }
 });
