@@ -137,12 +137,7 @@ signupButton.addEventListener('click', () => {
         return;
     }
 
-    if (!(/[a-zA-Z0-9]/.test(username))) {
-        alert('Username must contain at least one letter or number.');
-        return;
-    }
-
-    auth.createUserWithEmailAndPassword(`${username}@6loccyap.com`, password)
+    auth.createUserWithEmailAndPassword(`${username}@example.com`, password)
         .then(userCredential => {
             const user = userCredential.user;
             user.updateProfile({ displayName: username });
