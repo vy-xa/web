@@ -94,6 +94,7 @@ button:hover {
 .message .button img {
     width: 20px;
     height: 20px;
+    cursor: pointer;
 }
 
 .message:hover .buttons {
