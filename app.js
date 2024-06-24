@@ -1,8 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-auth.js";
-import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-database.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.9.0/firebase-analytics.js";
-
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyBLDbCmryVHE88d4CAwVpsFUlQQljdobtA",
     authDomain: "locc-6c202.firebaseapp.com",
@@ -14,11 +10,11 @@ const firebaseConfig = {
     databaseURL: "https://locc-6c202-default-rtdb.firebaseio.com/"
 };
 
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const database = getDatabase(app);
-const analytics = getAnalytics(app);
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
+const analytics = firebase.analytics();
 
 const loginDiv = document.getElementById('login');
 const chatDiv = document.getElementById('chat');
@@ -31,30 +27,30 @@ const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
 const messagesDiv = document.getElementById('messages');
 
-const messagesRef = ref(database, 'messages');
+const messagesRef = database.ref('messages');
 
 loginButton.addEventListener('click', () => {
     const email = emailInput.value;
     const password = passwordInput.value;
-    signInWithEmailAndPassword(auth, email, password)
+    auth.signInWithEmailAndPassword(email, password)
         .catch(error => alert(error.message));
 });
 
 signupButton.addEventListener('click', () => {
     const email = emailInput.value;
     const password = passwordInput.value;
-    createUserWithEmailAndPassword(auth, email, password)
+    auth.createUserWithEmailAndPassword(email, password)
         .catch(error => alert(error.message));
 });
 
 logoutButton.addEventListener('click', () => {
-    signOut(auth);
+    auth.signOut();
 });
 
 sendButton.addEventListener('click', () => {
     const message = messageInput.value;
     if (message.trim() !== "") {
-        push(messagesRef, {
+        messagesRef.push({
             text: message,
             timestamp: Date.now(),
             user: auth.currentUser.email
@@ -63,7 +59,7 @@ sendButton.addEventListener('click', () => {
     }
 });
 
-onAuthStateChanged(auth, user => {
+auth.onAuthStateChanged(user => {
     if (user) {
         loginDiv.style.display = 'none';
         chatDiv.style.display = 'block';
@@ -73,7 +69,7 @@ onAuthStateChanged(auth, user => {
     }
 });
 
-onValue(messagesRef, snapshot => {
+messagesRef.on('value', snapshot => {
     messagesDiv.innerHTML = '';
     snapshot.forEach(childSnapshot => {
         const message = childSnapshot.val();
