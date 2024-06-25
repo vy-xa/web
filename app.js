@@ -10,183 +10,112 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
 const auth = firebase.auth();
 const database = firebase.database();
 
-const loginDiv = document.getElementById('login');
-const chatDiv = document.getElementById('chat');
-const usernameInput = document.getElementById('username');
-const passwordInput = document.getElementById('password');
-const loginButton = document.getElementById('login-button');
-const signupButton = document.getElementById('signup-button');
-const logoutButton = document.getElementById('logout-button');
-const messageInput = document.getElementById('message-input');
-const sendButton = document.getElementById('send-button');
-const messagesDiv = document.getElementById('messages');
+function showLogin() {
+    document.getElementById('login-page').style.display = 'block';
+    document.getElementById('register-page').style.display = 'none';
+}
 
-const usersRef = database.ref('users');
-const messagesRef = database.ref('messages');
+function showRegister() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('register-page').style.display = 'block';
+}
 
-let currentUser = null;
+function login() {
+    const usernameEmail = document.getElementById('username-email').value;
+    const password = document.getElementById('password').value;
 
-const MAX_MESSAGE_LENGTH = 1000;
+    auth.signInWithEmailAndPassword(usernameEmail, password)
+        .then(userCredential => {
+            showChat();
+        })
+        .catch(error => {
+            console.error('Error logging in:', error);
+        });
+}
 
-const clearMessageInput = () => {
-    messageInput.value = '';
-    messageInput.focus();
-};
+function register() {
+    const username = document.getElementById('reg-username').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
 
-const addMessage = (text, user) => {
-    messagesRef.push({
-        text: text,
-        timestamp: Date.now(),
-        user: user
-    });
-};
-
-const editMessage = (messageId, newText) => {
-    messagesRef.child(messageId).update({
-        text: newText
-    });
-};
-
-const deleteMessage = (messageId) => {
-    messagesRef.child(messageId).remove();
-};
-
-const displayMessages = (snapshot) => {
-    messagesDiv.innerHTML = '';
-    snapshot.forEach(childSnapshot => {
-        const message = childSnapshot.val();
-        const messageId = childSnapshot.key;
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-
-        const messageText = document.createElement('span');
-        messageText.classList.add('message-text');
-        messageText.textContent = `${message.user}: ${message.text}`;
-
-        messageText.style.maxWidth = '100%';
-        messageText.style.wordWrap = 'break-word';
-
-        const buttonsDiv = document.createElement('div');
-        buttonsDiv.classList.add('buttons');
-
-        if (currentUser && message.user === currentUser.displayName) {
-            const editButton = document.createElement('button');
-            editButton.classList.add('button');
-            const editImg = document.createElement('img');
-            editImg.src = 'edit.png';
-            editButton.appendChild(editImg);
-            editButton.addEventListener('click', () => {
-                const newText = prompt('Edit your message:', message.text);
-                if (newText !== null && newText.trim() !== '') {
-                    editMessage(messageId, newText);
-                }
-            });
-            buttonsDiv.appendChild(editButton);
-        }
-
-        if (currentUser && message.user === currentUser.displayName) {
-            const deleteButton = document.createElement('button');
-            deleteButton.classList.add('button');
-            const deleteImg = document.createElement('img');
-            deleteImg.src = 'remove.png';
-            deleteButton.appendChild(deleteImg);
-            deleteButton.addEventListener('click', () => {
-                if (confirm('Are you sure you want to delete this message?')) {
-                    deleteMessage(messageId);
-                }
-            });
-            buttonsDiv.appendChild(deleteButton);
-        }
-
-        messageElement.appendChild(buttonsDiv);
-        messageElement.appendChild(messageText);
-        messagesDiv.appendChild(messageElement);
-    });
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-};
-
-loginButton.addEventListener('click', () => {
-    const username = usernameInput.value;
-    const password = passwordInput.value;
-    auth.signInWithEmailAndPassword(`${username}@chatapp.com`, password)
-        .catch(error => alert(error.message));
-});
-
-signupButton.addEventListener('click', () => {
-    const username = usernameInput.value;
-    const password = passwordInput.value;
-
-    if (!(/[a-zA-Z0-9]/.test(username))) {
-        alert('Username must contain at least one letter or number.');
-        return;
-    }
-
-    auth.createUserWithEmailAndPassword(`${username}@chatapp.com`, password)
+    auth.createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
             const user = userCredential.user;
-            return user.updateProfile({
-                displayName: username
-            }).then(() => {
-                usersRef.child(user.uid).set({
-                    username: username,
-                    email: `${username}@chatapp.com`
-                });
+            return database.ref('users/' + user.uid).set({
+                username: username,
+                email: email
             });
         })
-        .catch(error => alert(error.message));
-});
+        .then(() => {
+            showChat();
+        })
+        .catch(error => {
+            console.error('Error registering:', error);
+        });
+}
 
-logoutButton.addEventListener('click', () => {
-    auth.signOut();
-});
+function showChat() {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('register-page').style.display = 'none';
+    document.getElementById('chat-page').style.display = 'block';
+    loadMessages();
+}
 
-sendButton.addEventListener('click', () => {
-    const message = messageInput.value.trim();
-    if (message === '') {
-        return;
-    }
+function loadMessages() {
+    const messagesRef = database.ref('messages').orderByChild('timestamp');
+    messagesRef.on('child_added', snapshot => {
+        const message = snapshot.val();
+        displayMessage(message.username, message.text);
+    });
+}
 
-    if (message.length > MAX_MESSAGE_LENGTH) {
-        alert(`Message should not exceed ${MAX_MESSAGE_LENGTH} characters.`);
-        return;
-    }
+function sendMessage() {
+    const messageInput = document.getElementById('message-input');
+    const text = messageInput.value;
+    const user = auth.currentUser;
 
-    const now = Date.now();
-    if (currentUser && currentUser.lastMessageTime && (now - currentUser.lastMessageTime < 2000)) {
-        alert('Please wait a moment before sending another message.');
-        return;
-    }
+    database.ref('users/' + user.uid).once('value')
+        .then(snapshot => {
+            const username = snapshot.val().username;
+            return database.ref('messages').push({
+                username: username,
+                text: text,
+                timestamp: Date.now()
+            });
+        })
+        .then(() => {
+            messageInput.value = '';
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+        });
+}
 
-    if (currentUser) {
-        addMessage(message, currentUser.displayName);
-        currentUser.lastMessageTime = now;
-        clearMessageInput();
-    } else {
-        alert('You must be logged in to send messages.');
-    }
-});
+function displayMessage(username, text) {
+    const messagesDiv = document.getElementById('messages');
+    const messageElement = document.createElement('div');
+    messageElement.textContent = `${username}: ${text}`;
+    messagesDiv.appendChild(messageElement);
+}
+
+function logout() {
+    auth.signOut()
+        .then(() => {
+            showLogin();
+        })
+        .catch(error => {
+            console.error('Error logging out:', error);
+        });
+}
 
 auth.onAuthStateChanged(user => {
     if (user) {
-        currentUser = user;
-        loginDiv.style.display = 'none';
-        chatDiv.style.display = 'block';
-
-        const welcomeMessage = document.createElement('div');
-        welcomeMessage.textContent = `Welcome, ${user.displayName}!`;
-        messagesDiv.appendChild(welcomeMessage);
-
-        messagesRef.on('value', snapshot => {
-            displayMessages(snapshot);
-        });
-
+        showChat();
     } else {
-        currentUser = null;
-        loginDiv.style.display = 'block';
-        chatDiv.style.display = 'none';
-        messagesDiv.innerHTML = '';
+        showLogin();
     }
 });
