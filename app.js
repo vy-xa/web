@@ -48,7 +48,8 @@ function register() {
             const user = userCredential.user;
             return database.ref('users/' + user.uid).set({
                 username: username,
-                email: email
+                email: email,
+                joined: new Date().toISOString()
             });
         })
         .then(() => {
@@ -62,7 +63,7 @@ function register() {
 function showChat() {
     document.getElementById('login-page').style.display = 'none';
     document.getElementById('register-page').style.display = 'none';
-    document.getElementById('chat-page').style.display = 'block';
+    document.getElementById('chat-page').style.display = 'flex';
     loadMessages();
 }
 
@@ -81,11 +82,13 @@ function sendMessage() {
 
     database.ref('users/' + user.uid).once('value')
         .then(snapshot => {
-            const username = snapshot.val().username;
+            const userData = snapshot.val();
+            const username = userData.username;
             return database.ref('messages').push({
                 username: username,
                 text: text,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                userId: user.uid
             });
         })
         .then(() => {
@@ -99,8 +102,25 @@ function sendMessage() {
 function displayMessage(username, text) {
     const messagesDiv = document.getElementById('messages');
     const messageElement = document.createElement('div');
-    messageElement.textContent = `${username}: ${text}`;
+    messageElement.classList.add('message');
+    messageElement.innerHTML = `<span class="username" onclick="showUserInfo('${username}')">${username}</span>: ${text}`;
     messagesDiv.appendChild(messageElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function showUserInfo(username) {
+    database.ref('users').orderByChild('username').equalTo(username).once('value')
+        .then(snapshot => {
+            if (snapshot.exists()) {
+                const userData = Object.values(snapshot.val())[0];
+                alert(`Username: ${username}\nUser ID: ${userData.userId}\nJoined: ${userData.joined}`);
+            } else {
+                alert('User not found');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user info:', error);
+        });
 }
 
 function logout() {
