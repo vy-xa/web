@@ -1,15 +1,20 @@
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+
 const firebaseConfig = {
-    apiKey: "AIzaSyBLDbCmryVHE88d4CAwVpsFUlQQljdobtA",
-    authDomain: "locc-6c202.firebaseapp.com",
-    projectId: "locc-6c202",
-    storageBucket: "locc-6c202.appspot.com",
-    messagingSenderId: "383538729956",
-    appId: "1:383538729956:web:9812862b608aeab72cadf1",
-    measurementId: "G-BKBFG279BW",
-    databaseURL: "https://locc-6c202-default-rtdb.firebaseio.com/"
+  apiKey: "AIzaSyBLDbCmryVHE88d4CAwVpsFUlQQljdobtA",
+  authDomain: "locc-6c202.firebaseapp.com",
+  databaseURL: "https://locc-6c202-default-rtdb.firebaseio.com",
+  projectId: "locc-6c202",
+  storageBucket: "locc-6c202.appspot.com",
+  messagingSenderId: "383538729956",
+  appId: "1:383538729956:web:9812862b608aeab72cadf1",
+  measurementId: "G-BKBFG279BW"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 const auth = firebase.auth();
 const database = firebase.database();
