@@ -127,11 +127,13 @@ function logout() {
     auth.signOut()
         .then(() => {
             showLogin();
+            window.location.href = 'https://6locc.xyz';
         })
         .catch(error => {
             console.error('Error logging out:', error);
         });
 }
+
 
 auth.onAuthStateChanged(user => {
     if (user) {
