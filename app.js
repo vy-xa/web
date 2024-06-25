@@ -131,6 +131,7 @@ function showUserInfo(username) {
 function logout() {
     auth.signOut()
         .then(() => {
+            window.location.href = 'https://6locc.xyz';
             showLogin();
         })
         .catch(error => {
