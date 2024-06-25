@@ -1,26 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>ShadyComm</title>
-    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.12.1/firebase-database-compat.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6locc Chat</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="login">
-        <input type="text" id="username" placeholder="Username">
+    <div id="login-page">
+        <h1>Login to 6locc Chat</h1>
+        <input type="text" id="username-email" placeholder="Username or Email">
         <input type="password" id="password" placeholder="Password">
-        <button id="signup-button">Sign Up</button>
-        <button id="login-button">Login</button>
+        <button onclick="login()">Login</button>
+        <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
     </div>
-    <div id="chat">
-        <div id="messages"></div>
-        <input type="text" id="message-input" placeholder="Type a message">
-        <button id="send-button">Send</button>
-        <button id="logout-button">Logout</button>
+
+    <div id="register-page" style="display:none;">
+        <h1>Register for 6locc Chat</h1>
+        <input type="text" id="reg-username" placeholder="Username">
+        <input type="email" id="reg-email" placeholder="Email">
+        <input type="password" id="reg-password" placeholder="Password">
+        <button onclick="register()">Register</button>
+        <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
     </div>
+
+    <div id="chat-page" style="display:none;">
+        <h1>6locc Chat</h1>
+        <div id="chat-room">
+            <div id="messages"></div>
+            <input type="text" id="message-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="users-list"></div>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
