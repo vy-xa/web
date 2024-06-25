@@ -9,7 +9,6 @@ const firebaseConfig = {
   measurementId: "G-BKBFG279BW"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
@@ -42,6 +41,12 @@ function register() {
     const username = document.getElementById('reg-username').value;
     const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-password').value;
+
+    // Check if username contains at least one character
+    if (!username.trim()) {
+        alert('Username must include at least one character.');
+        return;
+    }
 
     auth.createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
@@ -127,13 +132,11 @@ function logout() {
     auth.signOut()
         .then(() => {
             showLogin();
-            window.location.href = 'https://6locc.xyz';
         })
         .catch(error => {
             console.error('Error logging out:', error);
         });
 }
-
 
 auth.onAuthStateChanged(user => {
     if (user) {
