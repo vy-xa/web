@@ -71,7 +71,19 @@ function showChat() {
     document.getElementById('login-page').style.display = 'none';
     document.getElementById('register-page').style.display = 'none';
     document.getElementById('chat-page').style.display = 'flex';
+    showPublicChat();
     loadUsers();
+}
+
+function showPublicChat() {
+    document.getElementById('public-chat-page').style.display = 'flex';
+    document.getElementById('private-chat-page').style.display = 'none';
+    loadPublicMessages();
+}
+
+function showDMs() {
+    document.getElementById('public-chat-page').style.display = 'none';
+    document.getElementById('private-chat-page').style.display = 'flex';
 }
 
 function loadUsers() {
@@ -90,7 +102,7 @@ function loadUsers() {
 }
 
 function startPrivateChat(userId, username) {
-    document.getElementById('private-chat-page').style.display = 'block';
+    document.getElementById('private-chat-page').style.display = 'flex';
     document.getElementById('private-messages').innerHTML = '';
 
     const privateMessagesRef = database.ref('privateMessages').child(currentUser.uid).child(userId);
@@ -131,6 +143,52 @@ function displayPrivateMessage(username, text, isSender) {
     } else {
         messageElement.classList.add('received');
     }
+    messageElement.innerHTML = `<span class="username">${username}</span><div class="message-text">${text}</div>`;
+    messagesDiv.appendChild(messageElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function loadPublicMessages() {
+    const publicMessagesRef = database.ref('publicMessages').orderByChild('timestamp');
+    const messagesDiv = document.getElementById('public-messages');
+    messagesDiv.innerHTML = '';
+    
+    publicMessagesRef.on('child_added', snapshot => {
+        const message = snapshot.val();
+        displayPublicMessage(message.username, message.text);
+    });
+}
+
+function sendPublicMessage() {
+    const messageInput = document.getElementById('public-message-input');
+    const text = messageInput.value;
+    const user = auth.currentUser;
+
+    if (text.trim() === '') {
+        return; // Do not send empty messages
+    }
+
+    database.ref('users/' + user.uid).once('value')
+        .then(snapshot => {
+            const username = snapshot.val().username;
+            return database.ref('publicMessages').push({
+                username: username,
+                text: text,
+                timestamp: Date.now()
+            });
+        })
+        .then(() => {
+            messageInput.value = '';
+        })
+        .catch(error => {
+            console.error('Error sending message:', error);
+        });
+}
+
+function displayPublicMessage(username, text) {
+    const messagesDiv = document.getElementById('public-messages');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message', 'received');
     messageElement.innerHTML = `<span class="username">${username}</span><div class="message-text">${text}</div>`;
     messagesDiv.appendChild(messageElement);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
