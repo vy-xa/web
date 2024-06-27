@@ -4,20 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>6locc Chat</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+    <script src="app.js" defer></script>
 </head>
 <body>
     <div id="login-page" class="centered-container">
-        <h1>Login to 6locc Chat</h1>
+        <h1>Login</h1>
         <input type="text" id="username-email" placeholder="Username or Email">
         <input type="password" id="password" placeholder="Password">
         <button onclick="login()">Login</button>
         <p>Don't have an account? <a href="#" onclick="showRegister()">Register here</a></p>
     </div>
 
-    <div id="register-page" class="centered-container" style="display:none;">
-        <h1>Register for 6locc Chat</h1>
+    <div id="register-page" class="centered-container" style="display: none;">
+        <h1>Register</h1>
         <input type="text" id="reg-username" placeholder="Username">
         <input type="email" id="reg-email" placeholder="Email">
         <input type="password" id="reg-password" placeholder="Password">
@@ -25,20 +28,16 @@
         <p>Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
     </div>
 
-    <div id="chat-page" class="full-page" style="display:none;">
-        <div id="chat-room" class="chat-room">
-            <div id="messages" class="messages"></div>
-            <input type="text" id="message-input" class="message-input" placeholder="Type a message...">
-            <button class="send-button" onclick="sendMessage()">Send</button>
+    <div id="chat-page" class="full-page" style="display: none;">
+        <div class="chat-room">
+            <button class="logout-button" onclick="logout()">Logout</button>
+            <div class="user-list" id="user-list"></div>
+            <div id="private-chat-page" style="display: none;">
+                <div id="private-messages" class="messages"></div>
+                <input type="text" id="private-message-input" class="message-input" placeholder="Type a message">
+                <button onclick="sendPrivateMessage()" class="send-button">Send</button>
+            </div>
         </div>
-        <button class="logout-button" onclick="logout()">Logout</button>
     </div>
-
-    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script src="app.js"></script>
 </body>
 </html>
