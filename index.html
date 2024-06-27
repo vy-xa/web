@@ -36,11 +36,13 @@
             <button class="logout-button" onclick="logout()">Logout</button>
         </div>
         <div id="public-chat-page" class="chat-room" style="display: none;">
+            <h2 id="public-chat-label">Public Chat</h2>
             <div id="public-messages" class="messages"></div>
             <input type="text" id="public-message-input" class="message-input" placeholder="Type a message">
             <button onclick="sendPublicMessage()" class="send-button">Send</button>
         </div>
         <div id="private-chat-page" class="chat-room" style="display: none;">
+            <h2 id="private-chat-label">Private Chat</h2>
             <div id="private-messages" class="messages"></div>
             <input type="text" id="private-message-input" class="message-input" placeholder="Type a message">
             <button onclick="sendPrivateMessage()" class="send-button">Send</button>
