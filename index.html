@@ -29,14 +29,21 @@
     </div>
 
     <div id="chat-page" class="full-page" style="display: none;">
-        <div class="chat-room">
-            <button class="logout-button" onclick="logout()">Logout</button>
+        <div class="sidebar">
+            <button onclick="showPublicChat()">Public Chat</button>
+            <button onclick="showDMs()">DMs</button>
             <div class="user-list" id="user-list"></div>
-            <div id="private-chat-page" style="display: none;">
-                <div id="private-messages" class="messages"></div>
-                <input type="text" id="private-message-input" class="message-input" placeholder="Type a message">
-                <button onclick="sendPrivateMessage()" class="send-button">Send</button>
-            </div>
+            <button class="logout-button" onclick="logout()">Logout</button>
+        </div>
+        <div id="public-chat-page" class="chat-room" style="display: none;">
+            <div id="public-messages" class="messages"></div>
+            <input type="text" id="public-message-input" class="message-input" placeholder="Type a message">
+            <button onclick="sendPublicMessage()" class="send-button">Send</button>
+        </div>
+        <div id="private-chat-page" class="chat-room" style="display: none;">
+            <div id="private-messages" class="messages"></div>
+            <input type="text" id="private-message-input" class="message-input" placeholder="Type a message">
+            <button onclick="sendPrivateMessage()" class="send-button">Send</button>
         </div>
     </div>
 </body>
