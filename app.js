@@ -9,6 +9,7 @@ const firebaseConfig = {
   measurementId: "G-BKBFG279BW"
 };
 
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
@@ -78,6 +79,7 @@ function showChat() {
 function showPublicChat() {
     document.getElementById('public-chat-page').style.display = 'flex';
     document.getElementById('private-chat-page').style.display = 'none';
+    document.getElementById('public-chat-label').textContent = 'Public Chat';
     loadPublicMessages();
 }
 
@@ -103,6 +105,7 @@ function loadUsers() {
 
 function startPrivateChat(userId, username) {
     document.getElementById('private-chat-page').style.display = 'flex';
+    document.getElementById('private-chat-label').textContent = `Chat with ${username}`;
     document.getElementById('private-messages').innerHTML = '';
 
     const privateMessagesRef = database.ref('privateMessages').child(currentUser.uid).child(userId);
@@ -188,7 +191,7 @@ function sendPublicMessage() {
 function displayPublicMessage(username, text) {
     const messagesDiv = document.getElementById('public-messages');
     const messageElement = document.createElement('div');
-    messageElement.classList.add('message', 'received');
+    messageElement.classList.add('message');
     messageElement.innerHTML = `<span class="username">${username}</span><div class="message-text">${text}</div>`;
     messagesDiv.appendChild(messageElement);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
