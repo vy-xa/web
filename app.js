@@ -13,6 +13,7 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const database = firebase.database();
+let currentUser;
 
 function showLogin() {
     document.getElementById('login-page').style.display = 'block';
@@ -30,6 +31,7 @@ function login() {
 
     auth.signInWithEmailAndPassword(usernameEmail, password)
         .then(userCredential => {
+            currentUser = userCredential.user;
             showChat();
         })
         .catch(error => {
@@ -69,74 +71,69 @@ function showChat() {
     document.getElementById('login-page').style.display = 'none';
     document.getElementById('register-page').style.display = 'none';
     document.getElementById('chat-page').style.display = 'flex';
-    loadMessages();
+    loadUsers();
 }
 
-let lastMessageKey = '';
-
-function loadMessages() {
-    const messagesRef = database.ref('messages').orderByChild('timestamp');
-    messagesRef.on('child_added', snapshot => {
-        const message = snapshot.val();
-        const messageKey = snapshot.key;
-
-        if (messageKey !== lastMessageKey) {
-            displayMessage(message.username, message.text);
-            lastMessageKey = messageKey;
-        }
+function loadUsers() {
+    const userList = document.getElementById('user-list');
+    userList.innerHTML = '';
+    
+    database.ref('users').on('value', snapshot => {
+        snapshot.forEach(childSnapshot => {
+            const userData = childSnapshot.val();
+            const userElement = document.createElement('div');
+            userElement.classList.add('user');
+            userElement.innerHTML = `<span onclick="startPrivateChat('${childSnapshot.key}', '${userData.username}')">${userData.username}</span>`;
+            userList.appendChild(userElement);
+        });
     });
 }
 
-function sendMessage() {
-    const messageInput = document.getElementById('message-input');
+function startPrivateChat(userId, username) {
+    document.getElementById('private-chat-page').style.display = 'block';
+    document.getElementById('private-messages').innerHTML = '';
+
+    const privateMessagesRef = database.ref('privateMessages').child(currentUser.uid).child(userId);
+    privateMessagesRef.on('child_added', snapshot => {
+        const message = snapshot.val();
+        displayPrivateMessage(username, message.text, message.senderId === currentUser.uid);
+    });
+}
+
+function sendPrivateMessage() {
+    const messageInput = document.getElementById('private-message-input');
     const text = messageInput.value;
-    const user = auth.currentUser;
 
     if (text.trim() === '') {
         return; // Do not send empty messages
     }
 
-    database.ref('users/' + user.uid).once('value')
-        .then(snapshot => {
-            const userData = snapshot.val();
-            const username = userData.username;
-            return database.ref('messages').push({
-                username: username,
-                text: text,
-                timestamp: Date.now(),
-                userId: user.uid
-            });
-        })
-        .then(() => {
-            messageInput.value = '';
-        })
-        .catch(error => {
-            console.error('Error sending message:', error);
-        });
+    const receiverId = document.querySelector('.user span.active').dataset.userid;
+
+    const messageData = {
+        text: text,
+        senderId: currentUser.uid,
+        timestamp: Date.now()
+    };
+
+    database.ref('privateMessages').child(currentUser.uid).child(receiverId).push(messageData);
+    database.ref('privateMessages').child(receiverId).child(currentUser.uid).push(messageData);
+
+    messageInput.value = '';
 }
 
-function displayMessage(username, text) {
-    const messagesDiv = document.getElementById('messages');
+function displayPrivateMessage(username, text, isSender) {
+    const messagesDiv = document.getElementById('private-messages');
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
-    messageElement.innerHTML = `<span class="username" onclick="showUserInfo('${username}')">${username}</span><div class="message-text">${text}</div>`;
+    if (isSender) {
+        messageElement.classList.add('sent');
+    } else {
+        messageElement.classList.add('received');
+    }
+    messageElement.innerHTML = `<span class="username">${username}</span><div class="message-text">${text}</div>`;
     messagesDiv.appendChild(messageElement);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-function showUserInfo(username) {
-    database.ref('users').orderByChild('username').equalTo(username).once('value')
-        .then(snapshot => {
-            if (snapshot.exists()) {
-                const userData = Object.values(snapshot.val())[0];
-                alert(`Username: ${username}\nUser ID: ${userData.userId}\nJoined: ${userData.joined}`);
-            } else {
-                alert('User not found');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching user info:', error);
-        });
 }
 
 function logout() {
@@ -151,6 +148,7 @@ function logout() {
 
 auth.onAuthStateChanged(user => {
     if (user) {
+        currentUser = user;
         showChat();
     } else {
         showLogin();
