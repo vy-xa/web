@@ -50,12 +50,19 @@ body {
     padding: 0.5rem;
     border-radius: 4px;
     background: #40444b;
+    word-wrap: break-word;
 }
 
 .message .username {
     font-weight: bold;
     color: #7289da;
     cursor: pointer;
+    display: block;
+    margin-bottom: 0.2rem;
+}
+
+.message .message-text {
+    white-space: pre-wrap;
 }
 
 .message-input {
@@ -68,7 +75,7 @@ body {
     color: #ffffff;
 }
 
-.send-button, .logout-button {
+.send-button {
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 4px;
@@ -78,8 +85,14 @@ body {
 }
 
 .logout-button {
-    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
     background: #f04747;
+    color: white;
+    cursor: pointer;
+    align-self: flex-end;
+    margin: 1rem;
 }
 
 h1 {
