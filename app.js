@@ -15,6 +15,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const database = firebase.database();
 let currentUser;
+let currentChatUserId = null;
 
 function showLogin() {
     document.getElementById('login-page').style.display = 'block';
@@ -45,7 +46,6 @@ function register() {
     const email = document.getElementById('reg-email').value;
     const password = document.getElementById('reg-password').value;
 
-    // Check if username contains at least one character
     if (!username.trim()) {
         alert('Username must include at least one character.');
         return;
@@ -77,6 +77,7 @@ function showChat() {
 }
 
 function showPublicChat() {
+    currentChatUserId = null;
     document.getElementById('public-chat-page').style.display = 'flex';
     document.getElementById('private-chat-page').style.display = 'none';
     document.getElementById('public-chat-label').textContent = 'Public Chat';
@@ -84,8 +85,10 @@ function showPublicChat() {
 }
 
 function showDMs() {
+    currentChatUserId = null;
     document.getElementById('public-chat-page').style.display = 'none';
     document.getElementById('private-chat-page').style.display = 'flex';
+    document.getElementById('private-chat-label').textContent = 'Direct Messages';
 }
 
 function loadUsers() {
@@ -98,12 +101,14 @@ function loadUsers() {
             const userElement = document.createElement('div');
             userElement.classList.add('user');
             userElement.innerHTML = `<span onclick="startPrivateChat('${childSnapshot.key}', '${userData.username}')">${userData.username}</span>`;
+            userElement.dataset.userid = childSnapshot.key; // Set user ID on the element
             userList.appendChild(userElement);
         });
     });
 }
 
 function startPrivateChat(userId, username) {
+    currentChatUserId = userId;
     document.getElementById('private-chat-page').style.display = 'flex';
     document.getElementById('private-chat-label').textContent = `Chat with ${username}`;
     document.getElementById('private-messages').innerHTML = '';
@@ -119,11 +124,9 @@ function sendPrivateMessage() {
     const messageInput = document.getElementById('private-message-input');
     const text = messageInput.value;
 
-    if (text.trim() === '') {
-        return; // Do not send empty messages
+    if (text.trim() === '' || currentChatUserId === null) {
+        return; // Do not send empty messages or if no user is selected
     }
-
-    const receiverId = document.querySelector('.user span.active').dataset.userid;
 
     const messageData = {
         text: text,
@@ -131,8 +134,8 @@ function sendPrivateMessage() {
         timestamp: Date.now()
     };
 
-    database.ref('privateMessages').child(currentUser.uid).child(receiverId).push(messageData);
-    database.ref('privateMessages').child(receiverId).child(currentUser.uid).push(messageData);
+    database.ref('privateMessages').child(currentUser.uid).child(currentChatUserId).push(messageData);
+    database.ref('privateMessages').child(currentChatUserId).child(currentUser.uid).push(messageData);
 
     messageInput.value = '';
 }
