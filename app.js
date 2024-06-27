@@ -72,11 +72,18 @@ function showChat() {
     loadMessages();
 }
 
+let lastMessageKey = '';
+
 function loadMessages() {
     const messagesRef = database.ref('messages').orderByChild('timestamp');
     messagesRef.on('child_added', snapshot => {
         const message = snapshot.val();
-        displayMessage(message.username, message.text);
+        const messageKey = snapshot.key;
+
+        if (messageKey !== lastMessageKey) {
+            displayMessage(message.username, message.text);
+            lastMessageKey = messageKey;
+        }
     });
 }
 
@@ -84,6 +91,10 @@ function sendMessage() {
     const messageInput = document.getElementById('message-input');
     const text = messageInput.value;
     const user = auth.currentUser;
+
+    if (text.trim() === '') {
+        return; // Do not send empty messages
+    }
 
     database.ref('users/' + user.uid).once('value')
         .then(snapshot => {
@@ -108,7 +119,7 @@ function displayMessage(username, text) {
     const messagesDiv = document.getElementById('messages');
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
-    messageElement.innerHTML = `<span class="username" onclick="showUserInfo('${username}')">${username}</span>: ${text}`;
+    messageElement.innerHTML = `<span class="username" onclick="showUserInfo('${username}')">${username}</span><div class="message-text">${text}</div>`;
     messagesDiv.appendChild(messageElement);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
@@ -131,7 +142,6 @@ function showUserInfo(username) {
 function logout() {
     auth.signOut()
         .then(() => {
-            window.location.href = 'https://6locc.xyz';
             showLogin();
         })
         .catch(error => {
