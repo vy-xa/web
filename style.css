@@ -1,7 +1,6 @@
 body {
-    font-family: 'Roboto', sans-serif;
     margin: 0;
-    padding: 0;
+    font-family: 'Roboto', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,55 +10,36 @@ body {
 }
 
 .centered-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background: #23272a;
     padding: 2rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    text-align: center;
 }
 
 .full-page {
-    width: 100%;
-    height: 100%;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.sidebar {
     display: flex;
     flex-direction: column;
+    width: 200px;
+    background: #23272a;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 .chat-room {
     flex: 1;
     display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    background: #36393f;
-    padding: 1rem;
-    overflow: hidden;
-}
-
-.user-list {
-    width: 200px;
-    overflow-y: auto;
-    background: #2f3136;
-    border-radius: 8px;
-    padding: 1rem;
-    margin-right: 1rem;
-}
-
-.user {
-    padding: 0.5rem;
-    cursor: pointer;
-}
-
-.user:hover {
-    background: #40444b;
-}
-
-#private-chat-page {
-    flex: 1;
-    display: flex;
     flex-direction: column;
-    background: #2f3136;
-    border-radius: 8px;
     padding: 1rem;
+    box-sizing: border-box;
 }
 
 .messages {
@@ -127,8 +107,7 @@ body {
     background: #f04747;
     color: white;
     cursor: pointer;
-    align-self: flex-end;
-    margin: 1rem;
+    margin-top: 1rem;
 }
 
 h1 {
@@ -163,4 +142,16 @@ p {
 a {
     color: #7289da;
     text-decoration: none;
+}
+
+.user-list {
+    margin-top: 1rem;
+}
+
+.user {
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: #2f3136;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
 }
