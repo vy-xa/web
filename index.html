@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fullscreen Video</title>
+    <title>6locc</title>
     <style>
         body, html {
             margin: 0;
@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <video id="fullscreen-video" autoplay loop>
+    <video id="fullscreen-video" loop>
         <source src="unit.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
@@ -30,11 +30,25 @@
         document.addEventListener('DOMContentLoaded', function () {
             var video = document.getElementById('fullscreen-video');
             
-            video.play().then(() => {
-                console.log('Video is playing with sound.');
-            }).catch((error) => {
-                console.error('Autoplay was prevented. User interaction is required to start the video.', error);
-            });
+            // Function to play the video
+            var playVideo = function() {
+                video.play().then(() => {
+                    // Video is playing
+                    console.log('Video is playing with sound.');
+                }).catch((error) => {
+                    console.error('Autoplay was prevented.', error);
+                });
+                
+                // Remove event listeners after playing
+                document.removeEventListener('click', playVideo);
+                document.removeEventListener('mousemove', playVideo);
+                document.removeEventListener('keydown', playVideo);
+            };
+            
+            // Add event listeners for user interaction
+            document.addEventListener('click', playVideo);
+            document.addEventListener('mousemove', playVideo);
+            document.addEventListener('keydown', playVideo);
         });
     </script>
 </body>
