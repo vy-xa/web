@@ -35,20 +35,7 @@
             if (playPromise !== undefined) {
                 playPromise.then(function() {
                 }).catch(function(error) {
-                    var button = document.createElement('button');
-                    button.innerHTML = 'enter';
-                    button.style.position = 'absolute';
-                    button.style.top = '50%';
-                    button.style.left = '50%';
-                    button.style.transform = 'translate(-50%, -50%)';
-                    button.style.padding = '10px 20px';
-                    button.style.fontSize = '20px';
-                    document.body.appendChild(button);
-
-                    button.addEventListener('click', function() {
-                        video.play();
-                        button.style.display = 'none';
-                    });
+                    video.play();
                 });
             }
         });
