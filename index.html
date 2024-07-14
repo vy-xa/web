@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>6locc</title>
+    <title>6locc.xyz</title>
     <style>
         body, html {
             margin: 0;
@@ -30,25 +30,15 @@
         document.addEventListener('DOMContentLoaded', function () {
             var video = document.getElementById('fullscreen-video');
             
-            // Function to play the video
-            var playVideo = function() {
+            // Play the video after 2 seconds
+            setTimeout(function() {
                 video.play().then(() => {
                     // Video is playing
                     console.log('Video is playing with sound.');
                 }).catch((error) => {
                     console.error('Autoplay was prevented.', error);
                 });
-                
-                // Remove event listeners after playing
-                document.removeEventListener('click', playVideo);
-                document.removeEventListener('mousemove', playVideo);
-                document.removeEventListener('keydown', playVideo);
-            };
-            
-            // Add event listeners for user interaction
-            document.addEventListener('click', playVideo);
-            document.addEventListener('mousemove', playVideo);
-            document.addEventListener('keydown', playVideo);
+            }, 2000); // 2000 milliseconds = 2 seconds
         });
     </script>
 </body>
