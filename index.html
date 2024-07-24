@@ -14,7 +14,7 @@
             overflow: hidden;
             font-family: 'VT323', monospace;
             background-color: black;
-            color: lime;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -39,10 +39,10 @@
             justify-content: center;
             align-items: center;
             z-index: 1;
+            cursor: pointer;
         }
         #click-to-proceed {
             font-size: 3em;
-            cursor: pointer;
             text-align: center;
         }
         #container {
@@ -56,13 +56,25 @@
             padding: 20px;
             text-align: center;
             z-index: 2;
-            color: lime;
+            color: white;
         }
         #container h1 {
             margin: 0 0 20px 0;
         }
+        #container textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 20px;
+            resize: none;
+            background-color: black;
+            color: white;
+            border: 1px solid white;
+            padding: 10px;
+            font-family: 'VT323', monospace;
+            font-size: 1em;
+        }
         #container button {
-            background-color: lime;
+            background-color: white;
             border: none;
             padding: 10px 20px;
             font-size: 1.2em;
@@ -70,30 +82,45 @@
             color: black;
         }
         #container button:hover {
-            background-color: darkgreen;
+            background-color: darkgrey;
+        }
+        .notification {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'VT323', monospace;
+            font-size: 1em;
+            z-index: 3;
         }
     </style>
 </head>
 <body>
     <video id="fullscreen-video" loop>
         <source src="unit.mp4" type="video/mp4">
-        your browser does not support videos.
+        Your browser does not support the video tag.
     </video>
     <div id="overlay">
-        <div id="click-to-proceed">click to proceed...</div>
+        <div id="click-to-proceed">Click to proceed</div>
     </div>
     <div id="container">
         <h1>6locc bin</h1>
-        <button onclick="createBin()">create Bin</button>
+        <textarea id="textInput" placeholder="Enter your text here (max 2MB)"></textarea>
+        <button onclick="createBin()">Create Bin</button>
     </div>
+    <div class="notification" id="notification"></div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var video = document.getElementById('fullscreen-video');
             var overlay = document.getElementById('overlay');
-            var clickToProceed = document.getElementById('click-to-proceed');
             var container = document.getElementById('container');
 
-            clickToProceed.addEventListener('click', function () {
+            overlay.addEventListener('click', function () {
                 overlay.style.display = 'none';
                 video.style.display = 'block';
                 container.style.display = 'block';
@@ -106,7 +133,43 @@
         });
 
         function createBin() {
-            alert('Create Bin button clicked');
+            var textInput = document.getElementById('textInput').value;
+            var textSize = new Blob([textInput]).size;
+            var notification = document.getElementById('notification');
+
+            if (textSize > 2 * 1024 * 1024) { // 2MB limit
+                showNotification('Text exceeds the 2MB limit.');
+                return;
+            }
+
+            fetch('/api/create-bin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: textInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    showNotification(data.error);
+                } else {
+                    showNotification('Bin created at: ' + data.url);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred. Please try again.');
+            });
+        }
+
+        function showNotification(message) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            setTimeout(function () {
+                notification.style.display = 'none';
+            }, 5000);
         }
     </script>
 </body>
