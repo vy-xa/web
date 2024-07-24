@@ -5,11 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>6locc.xyz</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             overflow: hidden;
+            font-family: 'VT323', monospace;
+            background-color: black;
+            color: lime;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         #fullscreen-video {
             position: absolute;
@@ -18,28 +26,88 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            display: none;
+        }
+        #overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+        #click-to-proceed {
+            font-size: 3em;
+            cursor: pointer;
+            text-align: center;
+        }
+        #container {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            z-index: 2;
+            color: lime;
+        }
+        #container h1 {
+            margin: 0 0 20px 0;
+        }
+        #container button {
+            background-color: lime;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: black;
+        }
+        #container button:hover {
+            background-color: darkgreen;
         }
     </style>
 </head>
 <body>
     <video id="fullscreen-video" loop>
         <source src="unit.mp4" type="video/mp4">
-        Your browser does not support the video tag.
+        your browser does not support videos.
     </video>
+    <div id="overlay">
+        <div id="click-to-proceed">click to proceed...</div>
+    </div>
+    <div id="container">
+        <h1>6locc bin</h1>
+        <button onclick="createBin()">create Bin</button>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var video = document.getElementById('fullscreen-video');
-            
-            // Play the video after 2 seconds
-            setTimeout(function() {
+            var overlay = document.getElementById('overlay');
+            var clickToProceed = document.getElementById('click-to-proceed');
+            var container = document.getElementById('container');
+
+            clickToProceed.addEventListener('click', function () {
+                overlay.style.display = 'none';
+                video.style.display = 'block';
+                container.style.display = 'block';
                 video.play().then(() => {
-                    // Video is playing
                     console.log('Video is playing with sound.');
                 }).catch((error) => {
                     console.error('Autoplay was prevented.', error);
                 });
-            }, 2000); // 2000 milliseconds = 2 seconds
+            });
         });
+
+        function createBin() {
+            alert('Create Bin button clicked');
+        }
     </script>
 </body>
 </html>
