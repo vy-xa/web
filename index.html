@@ -3,174 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>6locc.xyz</title>
+    <title>6locc Embeds</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
-        body, html {
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'VT323', monospace;
-            background-color: black;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #f4f4f4;
         }
-        #fullscreen-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-        #overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-            cursor: pointer;
-        }
-        #click-to-proceed {
-            font-size: 3em;
+        .container {
             text-align: center;
-        }
-        #container {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
+            background: #fff;
             padding: 20px;
-            text-align: center;
-            z-index: 2;
-            color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        #container h1 {
-            margin: 0 0 20px 0;
+        input[type="file"] {
+            margin: 20px 0;
         }
-        #container textarea {
-            width: 100%;
-            height: 100px;
-            margin-bottom: 20px;
-            resize: none;
-            background-color: black;
-            color: white;
-            border: 1px solid white;
-            padding: 10px;
-            font-family: 'VT323', monospace;
-            font-size: 1em;
-        }
-        #container button {
-            background-color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1.2em;
-            cursor: pointer;
-            color: black;
-        }
-        #container button:hover {
-            background-color: darkgrey;
-        }
-        .notification {
+        .uploaded-image {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
             display: none;
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
-            font-family: 'VT323', monospace;
-            font-size: 1em;
-            z-index: 3;
+        }
+        .image-link {
+            margin-top: 10px;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <video id="fullscreen-video" loop>
-        <source src="unit.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-    <div id="overlay">
-        <div id="click-to-proceed">Click to proceed</div>
+    <div class="container">
+        <h1>Upload an Image</h1>
+        <input type="file" id="imageInput" accept="image/*">
+        <div class="output">
+            <img id="uploadedImage" class="uploaded-image" alt="Uploaded Image">
+            <div id="imageLink" class="image-link">
+                <p>Image URL: <a id="imageURL" href="" target="_blank"></a></p>
+            </div>
+        </div>
     </div>
-    <div id="container">
-        <h1>6locc bin</h1>
-        <textarea id="textInput" placeholder="Enter your text here (max 2MB)"></textarea>
-        <button onclick="createBin()">Create Bin</button>
-    </div>
-    <div class="notification" id="notification"></div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var video = document.getElementById('fullscreen-video');
-            var overlay = document.getElementById('overlay');
-            var container = document.getElementById('container');
+        document.getElementById('imageInput').addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append('image', file);
 
-            overlay.addEventListener('click', function () {
-                overlay.style.display = 'none';
-                video.style.display = 'block';
-                container.style.display = 'block';
-                video.play().then(() => {
-                    console.log('Video is playing with sound.');
-                }).catch((error) => {
-                    console.error('Autoplay was prevented.', error);
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
                 });
-            });
-        });
 
-        function createBin() {
-            var textInput = document.getElementById('textInput').value;
-            var textSize = new Blob([textInput]).size;
-            var notification = document.getElementById('notification');
+                const result = await response.json();
 
-            if (textSize > 2 * 1024 * 1024) { // 2MB limit
-                showNotification('Text exceeds the 2MB limit.');
-                return;
-            }
+                if (result.success) {
+                    const uploadedImage = document.getElementById('uploadedImage');
+                    uploadedImage.src = result.url;
+                    uploadedImage.style.display = 'block';
 
-            fetch('/api/create-bin', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ text: textInput })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    showNotification(data.error);
+                    const imageURL = document.getElementById('imageURL');
+                    imageURL.href = result.url;
+                    imageURL.textContent = result.url;
+                    
+                    const imageLink = document.getElementById('imageLink');
+                    imageLink.style.display = 'block';
                 } else {
-                    showNotification('Bin created at: ' + data.url);
+                    alert('Image upload failed.');
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showNotification('An error occurred. Please try again.');
-            });
-        }
-
-        function showNotification(message) {
-            var notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.display = 'block';
-            setTimeout(function () {
-                notification.style.display = 'none';
-            }, 5000);
-        }
+            }
+        });
     </script>
 </body>
 </html>
