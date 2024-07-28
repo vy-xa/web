@@ -8,8 +8,8 @@ const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
 });
 
-const owner = 'your-github-username';
-const repo = 'your-github-repo';
+const owner = 'vy-xa';
+const repo = 'web';
 
 module.exports = async (req, res) => {
     if (req.method === 'POST') {
