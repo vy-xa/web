@@ -21,6 +21,8 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 500px;
         }
         input[type="file"] {
             margin: 20px 0;
@@ -35,27 +37,82 @@
             margin-top: 10px;
             display: none;
         }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            display: none;
+            margin-top: 20px;
+        }
+        .progress-bar-fill {
+            height: 20px;
+            width: 0;
+            background-color: #76c7c0;
+            transition: width 0.2s;
+        }
+        .error-log {
+            color: red;
+            margin-top: 20px;
+            display: none;
+        }
+        .upload-button {
+            padding: 10px 20px;
+            background-color: #76c7c0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+        .upload-button:hover {
+            background-color: #68b3a9;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Upload an Image</h1>
         <input type="file" id="imageInput" accept="image/*">
+        <button class="upload-button" id="uploadButton">Upload Image</button>
+        <div class="progress-bar" id="progressBar">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+        </div>
         <div class="output">
             <img id="uploadedImage" class="uploaded-image" alt="Uploaded Image">
             <div id="imageLink" class="image-link">
                 <p>Image URL: <a id="imageURL" href="" target="_blank"></a></p>
             </div>
         </div>
+        <div class="error-log" id="errorLog"></div>
     </div>
 
     <script>
-        document.getElementById('imageInput').addEventListener('change', async function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const formData = new FormData();
-                formData.append('image', file);
+        const imageInput = document.getElementById('imageInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const progressBar = document.getElementById('progressBar');
+        const progressBarFill = document.getElementById('progressBarFill');
+        const errorLog = document.getElementById('errorLog');
+        let selectedFile;
 
+        imageInput.addEventListener('change', function(event) {
+            selectedFile = event.target.files[0];
+            if (selectedFile) {
+                uploadButton.style.display = 'inline-block';
+                errorLog.style.display = 'none';
+            }
+        });
+
+        uploadButton.addEventListener('click', async function() {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+
+            progressBar.style.display = 'block';
+            progressBarFill.style.width = '0%';
+
+            try {
                 const response = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
@@ -74,9 +131,23 @@
                     
                     const imageLink = document.getElementById('imageLink');
                     imageLink.style.display = 'block';
+
+                    progressBarFill.style.width = '100%';
                 } else {
-                    alert('Image upload failed.');
+                    throw new Error(result.error || 'Image upload failed.');
                 }
+            } catch (error) {
+                progressBar.style.display = 'none';
+                errorLog.textContent = error.message;
+                errorLog.style.display = 'block';
+            }
+        });
+
+        imageInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                uploadButton.style.display = 'inline-block';
+                errorLog.style.display = 'none';
             }
         });
     </script>
