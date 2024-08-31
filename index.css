@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins',sans-serif;
 }
 
 :root {
@@ -15,28 +15,14 @@
     --accent: #433bff;
 }
 
-html, body {
+html,body {
     height: 100vh;
-    overflow: hidden;
 }
 
 body {
     background-color: var(--background);
-    animation: backgroundFadeIn 2s ease-in-out;
 }
 
-@keyframes backgroundFadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.hidden {
-    display: none;
-}
 
 .container {
     display: flex;
@@ -44,17 +30,9 @@ body {
     align-items: center;
     flex-direction: column;
     height: 100vh;
-    opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
-.container.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.video-bg a, #audio-control {
+.video-bg a {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -67,14 +45,38 @@ body {
     padding: 0.6rem;
     border-radius: 1.4vh;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    right: 0;
+    top: 0;
+    transition: all 0.2s;
 }
 
-.video-bg a:hover, #audio-control:hover {
+
+.video-bg a:hover {
+    transition: all 0.2s;
     background-color: #d8d8d888;
 }
 
-.profile-container {
+#audio-control {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+    height: 3rem;
+    z-index: 100;
+    margin: 1.5rem;
+    position: absolute;
+    background-color: #d8d8d810;
+    padding: 0.6rem;
+    border-radius: 1.4vh;
+    cursor: pointer;
+    right: 0;
+    top: 0;
+    transition: all 0.2s;
+  }
+
+
+
+  .profile-container {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -86,24 +88,13 @@ body {
     padding-bottom: 2rem;
     width: 40rem;
     max-height: 34rem;
+    max-height: 100%;
     background: rgba(25, 25, 25, 0.534);
     border-radius: 16px;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     backdrop-filter: blur(6.4px);
     -webkit-backdrop-filter: blur(6.4px);
     border: 1px solid rgba(25, 25, 25, 0.3);
-    animation: popIn 1s ease-in-out;
-}
-
-@keyframes popIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
 }
 
 .pfp {
@@ -113,7 +104,7 @@ body {
     align-items: center;
 }
 
-.pfp img {
+.pfp img{
     border-radius: 50%;
     width: 128px;
     height: 128px;
@@ -162,8 +153,12 @@ body {
     backdrop-filter: blur(5.8px);
     -webkit-backdrop-filter: blur(5.8px);
     border: 1px solid rgba(60, 60, 60, 0.3);
+    display: flex;
     padding: 0.4rem;
+    border-radius: 1vh;
     margin-top: 2%;
+
+    /* delete this if there isn't less than 1 badges */
     gap: 0.1rem;
 }
 
@@ -171,26 +166,15 @@ body {
     cursor: pointer;
     width: 22px;
     height: 22px;
-    animation: bounceIn 0.8s ease-out;
 }
 
-@keyframes bounceIn {
-    from {
-        transform: scale(0.5);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
 
 .links-container {
     justify-content: center;
     display: flex;
     align-items: center;
-}
 
+}
 .links {
     margin-top: 3%;
     border-radius: 1vh;
@@ -210,21 +194,13 @@ body {
     border: 1px solid rgba(60, 60, 60, 0.3);
     width: 48%; 
     margin: 1%; 
-    padding: 0.4rem;
     border-radius: 1vh;
+    padding: 0.4rem;
     box-sizing: border-box;
     margin-top: 2%;
-    animation: fadeIn 1s ease-in-out;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
+
 
 .link-content {
     display: flex;
@@ -250,6 +226,7 @@ body {
 .link-content a {
     margin-left: auto;
 }
+
 
 .tooltip {
     z-index: 100;
@@ -287,26 +264,27 @@ body {
     margin: auto;
 }
 
-#overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    font-size: 24px;
-    z-index: 9999;
-    cursor: pointer;
-    animation: fadeIn 1.5s ease-in-out;
-}
 
-#overlay.hidden {
-    display: none;
-}
+      #overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(0, 0, 0, 0.8);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #fff;
+          font-size: 24px;
+          z-index: 9999;
+          cursor: pointer;
+      }
+
+
+      #overlay.hidden {
+          display: none;
+      }
 
 @media only screen and (max-width: 600px) { 
     .link {
