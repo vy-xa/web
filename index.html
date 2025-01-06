@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>codersocks.xyz</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .flash-images {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .flash-images img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        audio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flash-images">
+        <img src="IMG_2857.png" alt="IMG 2857">
+        <img src="IMG_2858.png" alt="IMG 2858">
+        <img src="IMG_2859.png" alt="IMG 2859">
+        <img src="IMG_2860.png" alt="IMG 2860">
+        <img src="IMG_2861.png" alt="IMG 2861">
+        <img src="IMG_2862.png" alt="IMG 2862">
+        <img src="IMG_2863.png" alt="IMG 2863">
+        <img src="IMG_2864.png" alt="IMG 2864">
+        <img src="IMG_2865.png" alt="IMG 2865">
+        <img src="IMG_2866.png" alt="IMG 2866">
+        <img src="IMG_2867.png" alt="IMG 2867">
+        <img src="IMG_2869.png" alt="IMG 2869">
+        <img src="IMG_2870.png" alt="IMG 2870">
+        <img src="IMG_2871.png" alt="IMG 2871">
+        <img src="IMG_2872.png" alt="IMG 2872">
+        <img src="IMG_2873.png" alt="IMG 2873">
+        <img src="IMG_2874.png" alt="IMG 2874">
+        <img src="IMG_2875.png" alt="IMG 2875">
+        <img src="IMG_2876.png" alt="IMG 2876">
+        <img src="IMG_2877.png" alt="IMG 2877">
+    </div>
+
+    <audio id="audio-player" autoplay loop>
+        <source src="https://cdn.discordapp.com/attachments/1324543404163596388/1325921751619600384/1736193077.0011604_spotymate.com.mp3?ex=677d8c5c&is=677c3adc&hm=5fdc9be70840f6121025dd342d32178f6dca366879c804d6a3c406c642b22d3d&" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const audioPlayer = document.getElementById('audio-player');
+        audioPlayer.playbackRate = 2.0;
+
+        const images = document.querySelectorAll('.flash-images img');
+        let currentIndex = 0;
+
+        function showNextImage() {
+            images[currentIndex].style.display = 'none';
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].style.display = 'block';
+        }
+
+        images[currentIndex].style.display = 'block';
+
+        setInterval(showNextImage, 100);
+    </script>
+
+</body>
+</html>
